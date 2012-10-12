@@ -1,52 +1,62 @@
 package controller;
 
-import sensor.GRTXBoxJoystick;
-import sensor.base.GRTXboxDriverStation;
 import core.EventController;
 import core.HouseMech;
 import event.events.ButtonEvent;
-import event.events.XboxJoystickEvent;
 import event.listeners.ButtonListener;
-import event.listeners.XboxJoystickListener;
+import java.util.ArrayList;
+import java.util.List;
+import sensor.GRTXBoxJoystick;
 
 public class HauntedHouseTestController extends EventController implements ButtonListener {
 
-	private GRTXBoxJoystick stick;
-	private HouseMech[] mechanisms;
-	private int currentControlledMech = 0;	//The index of the current mechanism we are controlling.
-	
-	public HauntedHouseTestController(HouseMech[] mechs, GRTXBoxJoystick xbox, String name) {
-		super(name);
-		this.stick = xbox;
-		this.mechanisms = mechs;
-	}
+    private GRTXBoxJoystick stick;
+    private List<HouseMech> mechanisms;
+    private int currentControlledMech = 0;	//The index of the current mechanism we are controlling.
 
-	@Override
-	protected void startListening() {
-		this.stick.addButtonListener(this);
-	}
+    public HauntedHouseTestController(List<HouseMech> mechanisms, GRTXBoxJoystick xbox, String name) {
+        super(name);
+        stick = xbox;
+        this.mechanisms = mechanisms;
+    }
+    
+    public HauntedHouseTestController(GRTXBoxJoystick xbox, String name) {
+        this(new ArrayList<HouseMech>(), xbox, name);
+    }
+    
+    public void addMech(HouseMech mech){
+        mechanisms.add(mech);
+    }
 
-	@Override
-	protected void stopListening() {
-		this.stick.removeButtonListener(this);
-	}
+    @Override
+    protected void startListening() {
+        this.stick.addButtonListener(this);
+    }
 
-	@Override
-	public void buttonPressed(ButtonEvent e) {
-		if(e.getButtonID() == GRTXBoxJoystick.KEY_BUTTON_4){
-			this.currentControlledMech = (this.currentControlledMech - 1) % this.mechanisms.length;
-		} else if (e.getButtonID() == GRTXBoxJoystick.KEY_BUTTON_5){
-			this.currentControlledMech = (this.currentControlledMech + 1) % this.mechanisms.length;
-		} else if (e.getButtonID() == GRTXBoxJoystick.KEY_BUTTON_0){
-			this.mechanisms[this.currentControlledMech].toggle();
-		}
-	}
+    @Override
+    protected void stopListening() {
+        this.stick.removeButtonListener(this);
+    }
 
-	@Override
-	public void buttonReleased(ButtonEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	
+    @Override
+    public void buttonPressed(ButtonEvent e) {
+        
+        switch (e.getButtonID()) {
+            case GRTXBoxJoystick.KEY_BUTTON_0:
+                mechanisms.get(currentControlledMech).toggle();
+                break;
+            case GRTXBoxJoystick.KEY_BUTTON_4:
+                currentControlledMech++;
+                break;
+            case GRTXBoxJoystick.KEY_BUTTON_5:
+                currentControlledMech--;
+        }
+        
+        currentControlledMech %= mechanisms.size();
+    }
+
+    @Override
+    public void buttonReleased(ButtonEvent e) {
+        // TODO Auto-generated method stub
+    }
 }
-
