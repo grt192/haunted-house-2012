@@ -4,12 +4,17 @@ import actuator.GRTSolenoid;
 
 public abstract class HouseMech extends GRTLoggedProcess {
 
-    protected GRTSolenoid solenoid;
+    protected GRTSolenoid[] solenoids;
     private boolean extended = false;	//We start in the inactive (not extended) state.
 
-    public HouseMech(String name, GRTSolenoid sol) {
+    public HouseMech(String name, GRTSolenoid[] sols) {
         super(name);
-        this.solenoid = sol;
+        this.solenoids = sols;
+    }
+    
+    public HouseMech(String name, GRTSolenoid sol) {
+        this(name, new GRTSolenoid[0]);
+        solenoids[0] = sol;
     }
 
     /**
