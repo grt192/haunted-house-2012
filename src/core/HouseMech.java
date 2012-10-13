@@ -2,16 +2,38 @@ package core;
 
 import actuator.GRTSolenoid;
 
+/**
+ * Generic haunted house mechanism.
+ * 
+ * @author agd
+ */
 public abstract class HouseMech extends GRTLoggedProcess {
 
+    /**
+     * Array of solenoids for this mechanism. If this HouseMech was 
+     * constructed with a single solenoid and not an array, that solenoid
+     * will be the first element in this solenoid array.
+     */
     protected GRTSolenoid[] solenoids;
     private boolean extended = false;	//We start in the inactive (not extended) state.
 
+    /**
+     * Instantiates a house mechanism.
+     * 
+     * @param name name of mechanism
+     * @param sols solenoids to control
+     */
     public HouseMech(String name, GRTSolenoid[] sols) {
         super(name);
         this.solenoids = sols;
     }
     
+    /**
+     * Instantiates a house mechanism.
+     * 
+     * @param name name of mechanism
+     * @param sol single solenoid to control
+     */
     public HouseMech(String name, GRTSolenoid sol) {
         this(name, new GRTSolenoid[0]);
         solenoids[0] = sol;
@@ -37,6 +59,9 @@ public abstract class HouseMech extends GRTLoggedProcess {
         this.extended = false;
     }
 
+    /**
+     * Toggles the mechanism. If it is extended, retract; and vice versa.
+     */
     public void toggle() {
         if (extended)
             retract();
