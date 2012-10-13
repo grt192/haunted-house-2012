@@ -21,7 +21,7 @@ public abstract class HouseMech extends GRTLoggedProcess {
      * Extend the mechanism into its active state. Witch pops out of window, or
      * door will swing open, etc.
      *
-     * Override this to define custom actuation, and call this afterwards.
+     * Override this to define custom actuation, and call super.extend() afterwards.
      */
     public void extend() {
         this.extended = true;
