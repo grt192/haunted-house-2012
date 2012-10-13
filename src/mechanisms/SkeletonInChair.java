@@ -30,14 +30,12 @@ public class SkeletonInChair extends HouseMech {
         
     }
     
-    @Override
     public void extend()
     {
         chairPiston.engage(true);
         super.extend();
     }
     
-    @Override
     public void retract()
     {
         chairPiston.engage(false);
