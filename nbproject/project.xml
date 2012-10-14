@@ -9,7 +9,6 @@
     <type>org.netbeans.modules.ant.freeform</type>
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
-            <!-- Do not use Project Properties customizer when editing this file manually. -->
             <name>grthauntedhouse2012</name>
             <properties>
                 <property-file>${user.home}/.sunspotfrc.properties</property-file>
@@ -24,26 +23,6 @@
                 </source-folder>
             </folders>
             <ide-actions>
-                <action name="build">
-                    <target>compile</target>
-                </action>
-                <action name="clean">
-                    <target>clean</target>
-                </action>
-                <action name="javadoc">
-                    <target>javadoc</target>
-                </action>
-                <action name="run">
-                    <target>run</target>
-                </action>
-                <action name="test">
-                    <target>test</target>
-                </action>
-                <action name="rebuild">
-                    <target>clean</target>
-                    <target>compile</target>
-                </action>
-            </ide-actions><ide-actions>
                 <action name="build">
                     <target>jar-app</target>
                 </action>

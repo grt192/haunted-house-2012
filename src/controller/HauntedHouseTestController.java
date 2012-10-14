@@ -51,7 +51,7 @@ public class HauntedHouseTestController extends EventController implements Butto
      * @param mech mechanism to control
      */
     public void addMech(HouseMech mech){
-        mechanisms.add(mech);
+        mechanisms.addElement(mech);
     }
 
     protected void startListening() {
@@ -66,7 +66,7 @@ public class HauntedHouseTestController extends EventController implements Butto
         
         switch (e.getButtonID()) {
             case GRTXBoxJoystick.KEY_BUTTON_0:
-                ((HouseMech) mechanisms.get(currentControlledMech)).toggle();
+                ((HouseMech) mechanisms.elementAt(currentControlledMech)).toggle();
                 break;
             case GRTXBoxJoystick.KEY_BUTTON_4:
                 currentControlledMech++;
