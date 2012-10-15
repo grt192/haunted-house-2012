@@ -45,7 +45,7 @@ public abstract class HouseMech extends GRTLoggedProcess {
      *
      * Override this to define custom actuation, and call super.extend() afterwards.
      */
-    public void extend() {
+    public void activate() {
         this.extended = true;
     }
 
@@ -55,7 +55,7 @@ public abstract class HouseMech extends GRTLoggedProcess {
      *
      * Override and call super.retract();
      */
-    public void retract() {
+    public void deactivate() {
         this.extended = false;
     }
 
@@ -64,8 +64,8 @@ public abstract class HouseMech extends GRTLoggedProcess {
      */
     public void toggle() {
         if (extended)
-            retract();
+            deactivate();
         else
-            extend();
+            activate();
     }
 }

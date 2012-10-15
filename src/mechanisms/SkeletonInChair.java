@@ -30,16 +30,16 @@ public class SkeletonInChair extends HouseMech {
         
     }
     
-    public void extend()
+    public void activate()
     {
         chairPiston.engage(true);
-        super.extend();
+        super.activate();
     }
     
-    public void retract()
+    public void deactivate()
     {
         chairPiston.engage(false);
-        super.retract();
+        super.deactivate();
     }
     
 }

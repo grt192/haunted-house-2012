@@ -17,12 +17,12 @@ public class Shadows extends HouseMech {
     
     public void extend() {
         shadows.engage(true);
-        super.extend();
+        super.activate();
     }
     
     public void retract() {
         shadows.engage(false);
-        super.retract();
+        super.deactivate();
     }
 }
     
