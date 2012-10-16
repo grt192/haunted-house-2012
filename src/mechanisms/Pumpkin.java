@@ -16,13 +16,11 @@ public class Pumpkin extends HouseMech{
         super(name, solenoid);
     }
 
-    public void retract (){
-        super.activate();
+    protected void retract (){
         solenoids[0].engage(false);
     }
 
-    public void extend(){
-        super.deactivate();
+    protected void extend() {
         solenoids[0].engage(true);
     }
 }
