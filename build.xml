@@ -26,6 +26,7 @@
     <property name="user.properties.file" value="build.properties"/>
     <property file="${user.home}/.sunspotfrc.properties"/>
     <import file="${sunspot.home}/build.xml"/>
+    <property name="src.dir" value="src:../grtframework/src"/>
 
     <!--
 
