@@ -17,14 +17,20 @@ public class Elmo extends HouseMech{
         super("Elmo", sol);
     }
     
-    public void popOut (){
-        solenoids[0].engage(true);
-        super.activate();
+    public void popOut() {
+        activate();
     }
     
-    public void backIn(){
+    public void backIn() {
+        deactivate();
+    }
+    
+    protected void extend(){
+        solenoids[0].engage(true);
+    }
+    
+    protected void retract(){
         solenoids[0].engage(false);
-        super.deactivate();
     }
     
 }

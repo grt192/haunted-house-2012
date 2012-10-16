@@ -18,13 +18,11 @@ public class Cyclops extends HouseMech {
         super(name, solenoid);
     }
     
-    public void activate() {
+    protected void extend() {
         cyclops.engage(true);
-        super.activate();
     }
     
-    public void deactivate() {
+    protected void retract() {
         cyclops.engage(false);
-        super.deactivate();
     }
 }

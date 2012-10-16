@@ -1,4 +1,3 @@
-
 package mechanisms;
 
 import actuator.GRTSolenoid;
@@ -9,21 +8,19 @@ import core.HouseMech;
  * @author sidd
  */
 public class Shadows extends HouseMech {
+
     private GRTSolenoid shadows;
-    
+
     public Shadows(String name, GRTSolenoid solenoid) {
         super(name, solenoid);
+        shadows = solenoids[0];
     }
-    
-    public void extend() {
+
+    protected void extend() {
         shadows.engage(true);
-        super.activate();
     }
-    
-    public void retract() {
+
+    protected void retract() {
         shadows.engage(false);
-        super.deactivate();
     }
 }
-    
-
