@@ -1,6 +1,6 @@
 MIDlet-Name: grthauntedhouse
 MIDlet-Version: 1.0.0
 MIDlet-Vendor: FIRST
-MIDlet-1: MainRobot, , deploy.MainRobot
+MIDlet-1: HauntedHouse, , deploy.HauntedHouse
 MicroEdition-Profile: IMP-1.0
 MicroEdition-Configuration: CLDC-1.1
