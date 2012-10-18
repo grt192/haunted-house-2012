@@ -42,14 +42,7 @@ public abstract class HouseMech extends GRTLoggedProcess {
         solenoids[0] = sol;
     }
 
-    /**
-     * Extend the mechanism into its active state. Witch pops out of window, or
-     * door will swing open, etc.
-     */
-    public final void activate() {
-        this.extended = true;
-        extend();
-    }
+
     
     /**
      * This method should activate the solenoid as necessary to
@@ -57,7 +50,23 @@ public abstract class HouseMech extends GRTLoggedProcess {
      */
     protected abstract void extend();
 
-    /**
+	/**
+     * This method should activate the solenoid as necessary to
+     * deactivate the mechanism.
+     */
+    protected abstract void retract();
+   
+	
+	/**
+     * Extend the mechanism into its active state. Witch pops out of window, or
+     * door will swing open, etc.
+     */
+    public final void activate() {
+        this.extended = true;
+        extend();
+    }
+	
+	/**
      * Retract the mechanism into its inactive state. Witch will go back into
      * window, door will swing closed, etc.
      */
@@ -65,12 +74,7 @@ public abstract class HouseMech extends GRTLoggedProcess {
         this.extended = false;
         retract();
     }
-
-    /**
-     * This method should activate the solenoid as necessary to
-     * deactivate the mechanism.
-     */
-    protected abstract void retract();
+	
     
     /**
      * Toggles the mechanism. If it is extended, retract; and vice versa.

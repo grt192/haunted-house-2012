@@ -16,15 +16,7 @@ public class Elmo extends HouseMech{
     public Elmo(GRTSolenoid sol){
         super("Elmo", sol);
     }
-    
-    public void popOut() {
-        activate();
-    }
-    
-    public void backIn() {
-        deactivate();
-    }
-    
+
     protected void extend(){
         solenoids[0].engage(true);
     }
