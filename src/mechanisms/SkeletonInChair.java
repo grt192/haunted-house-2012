@@ -26,6 +26,33 @@ public class SkeletonInChair extends HouseMech {
         this.chairPiston = chairPiston;
 
     }
+    
+    public void run()
+    {
+        while(running)
+        {
+            
+            try{
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                
+            }
+            
+            toggle();
+            
+        }
+    }
+    
+    public void startAutonomous()
+    {
+        startPolling();
+    }
+    
+    public void stopAutonomous()
+    {
+        halt();
+    }
+        
 
     protected void extend() {
         chairPiston.engage(true);
