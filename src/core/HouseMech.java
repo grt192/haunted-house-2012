@@ -9,7 +9,7 @@ import actuator.GRTSolenoid;
  */
 public abstract class HouseMech extends GRTLoggedProcess {
 
-    /**
+	/**
      * Array of solenoids for this mechanism. If this HouseMech was 
      * constructed with a single solenoid and not an array, that solenoid
      * will be the first element in this solenoid array.
@@ -85,4 +85,12 @@ public abstract class HouseMech extends GRTLoggedProcess {
         else
             activate();
     }
+	
+	/**
+	 * Get the current state of the mechanism; either extended or retracted.
+	 * @return The current state.
+	 */
+	public boolean getCurrentState(){
+		return this.extended;
+	}
 }

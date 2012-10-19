@@ -12,8 +12,9 @@ import core.HouseMech;
  * @author Angie
  */
 public class Pumpkin extends HouseMech{
-    public Pumpkin(String name, GRTSolenoid solenoid){
-        super(name, solenoid);
+    
+	public Pumpkin(GRTSolenoid solenoid){
+        super("Pumpkin", solenoid);
     }
 
     protected void retract (){

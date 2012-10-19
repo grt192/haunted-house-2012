@@ -13,9 +13,9 @@ import core.HouseMech;
  */
 public class Cyclops extends HouseMech {
     private GRTSolenoid cyclops;
-    
-    public Cyclops(String name, GRTSolenoid solenoid) {
-        super(name, solenoid);
+
+	public Cyclops(GRTSolenoid solenoid) {
+        super("Cyclops", solenoid);
     }
     
     protected void extend() {

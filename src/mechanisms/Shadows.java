@@ -11,8 +11,8 @@ public class Shadows extends HouseMech {
 
     private GRTSolenoid shadows;
 
-    public Shadows(String name, GRTSolenoid solenoid) {
-        super(name, solenoid);
+    public Shadows(GRTSolenoid solenoid) {
+        super("Shadows", solenoid);
         shadows = solenoids[0];
     }
 
