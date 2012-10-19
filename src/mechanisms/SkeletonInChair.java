@@ -13,18 +13,13 @@ import core.HouseMech;
  */
 public class SkeletonInChair extends HouseMech {
 
-    private GRTSolenoid chairPiston;
-
     /**
      *
-     * @param name
      * @param chairPiston
      */
-    public SkeletonInChair(String name, GRTSolenoid chairPiston) {
-        super(name, chairPiston);
-
-        this.chairPiston = chairPiston;
-
+    public SkeletonInChair(GRTSolenoid chairPiston) {
+        super("skeleton", chairPiston);
+        
     }
     
     public void run()
@@ -55,10 +50,10 @@ public class SkeletonInChair extends HouseMech {
         
 
     protected void extend() {
-        chairPiston.engage(true);
+        solenoids[0].engage(true);
     }
 
     protected void retract() {
-        chairPiston.engage(false);
+        solenoids[0].engage(false);
     }
 }

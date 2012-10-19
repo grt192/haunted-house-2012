@@ -45,6 +45,11 @@
                     <target>javadoc</target>
                 </action>
             </ide-actions>
+            <export>
+                <type>folder</type>
+                <location>build</location>
+                <build-target>jar-app</build-target>
+            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -79,7 +84,7 @@
             <compilation-unit>
                 <package-root>src</package-root>
                 <classpath mode="boot">${sunspot.bootclasspath}</classpath>
-                <classpath mode="compile">../grtframework/src</classpath>
+                <classpath mode="compile">../grtframework/src;${user.home}\sunspotfrcsdk\lib\squawk_device.jar;${user.home}\sunspotfrcsdk\lib\WPILibJ\classes.jar</classpath>
                 <built-to>build</built-to>
                 <source-level>1.4</source-level>
             </compilation-unit>
