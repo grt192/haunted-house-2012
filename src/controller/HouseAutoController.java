@@ -4,55 +4,68 @@
  */
 package controller;
 
+import core.GRTLoggedProcess;
 import core.HouseMech;
 import java.util.Random;
 
 /**
+ * A controller that controls autonomous switching
+ * of a haunted house mechanism.
+ * Runs on a timer on random intervals with a set range.
  *
  * @author student
  */
-public class HouseAutoController extends Thread {
-	private final HouseMech mech;
-	private long startTime;
-	private boolean autonomous = false;
-	private final long[] waitTimes;
-	private static Random random = new Random();
-	public static final int INDEX_MIN_TIME_EXTENDED = 0;
-	public static final int INDEX_MAX_TIME_EXTENDED = 1;
-	public static final int INDEX_MIN_TIME_RETRACTED = 2;
-	public static final int INDEX_MAX_TIME_RETRACTED = 3;
-	/**
-	 * Constructor
-	 * @param mech
-	 * @param waitTimes Array of format { min_extended_time, max_extended_time, min_retracted_time, max_retracted_time } all in milliseconds.
-	 */
-	public HouseAutoController(HouseMech mech, long[] waitTimes){
-		this.mech = mech;
-		this.waitTimes = waitTimes;
-	}
-	
-	public void run(){
-		while (true){
-			if (autonomous){
-				boolean extended = mech.getCurrentState();
-				
-				long sleepTime = random.nextLong();
-				sleepTime = sleepTime % (waitTimes[extended ? INDEX_MAX_TIME_RETRACTED : INDEX_MAX_TIME_EXTENDED] 
-							- waitTimes[extended ? INDEX_MIN_TIME_RETRACTED : INDEX_MIN_TIME_RETRACTED]) 
-							+ waitTimes[extended ? INDEX_MIN_TIME_RETRACTED : INDEX_MIN_TIME_RETRACTED];
-				try {
-					Thread.sleep(sleepTime);
-				} catch (InterruptedException ex) {
-					ex.printStackTrace();
-				}				
-			}
-		}
-	}
-	public void beginAutonomous(){
-		startTime = System.currentTimeMillis();
-		autonomous = true;
-	}
-	public void endAutonomous(){
-		autonomous = false;
-	}
+public class HouseAutoController extends GRTLoggedProcess {
+
+    private final HouseMech mech;
+    private static Random random = new Random();
+    private final int minExtendedTime;
+    private final int maxExtendedTime;
+    private final int minRetractedTime;
+    private final int maxRetractedTime;
+
+    /**
+     * Constructor
+     *
+     * @param name name of controller
+     * @param mech mechanism to control
+     * @param minExtendedTime minimum time to stay extended (milliseconds)
+     * @param maxExtendedTime maximum time to stay extended
+     * @param minRetractedTime minimum time to stay retracted
+     * @param maxRetractedTime maximum time to stay retracted
+     *
+     */
+    public HouseAutoController(String name, HouseMech mech,
+            int minExtendedTime, int maxExtendedTime,
+            int minRetractedTime, int maxRetractedTime) {
+        
+        super(name, 0);
+        
+        this.mech = mech;
+        this.minExtendedTime = minExtendedTime;
+        this.maxExtendedTime = maxExtendedTime;
+        this.minRetractedTime = minRetractedTime;
+        this.maxRetractedTime = maxRetractedTime;
+    }
+    
+    protected void poll() {
+        mech.toggle();        
+        boolean extended = mech.getCurrentState();
+
+        int sleepTime = random.nextInt(extended
+                ? maxExtendedTime - minExtendedTime
+                : maxRetractedTime - minRetractedTime)
+                + (extended ? minExtendedTime : minRetractedTime);
+        
+        setSleepTime(sleepTime);
+        //sleeps according to GRTLoggedProcess
+    }
+
+    public void beginAutonomous() {
+        startPolling();
+    }
+
+    public void endAutonomous() {
+        halt();
+    }
 }
