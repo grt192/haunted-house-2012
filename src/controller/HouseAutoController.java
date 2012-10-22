@@ -7,6 +7,7 @@ package controller;
 import core.GRTLoggedProcess;
 import core.HouseMech;
 import java.util.Random;
+import logger.GRTLogger;
 
 /**
  * A controller that controls autonomous switching
@@ -51,12 +52,14 @@ public class HouseAutoController extends GRTLoggedProcess {
     protected void poll() {
         mech.toggle();        
         boolean extended = mech.getCurrentState();
-
-        int sleepTime = random.nextInt(extended
+		
+		GRTLogger.getLogger().logInfo(extended ? "Retracting" : "Extending");
+        
+		int sleepTime = random.nextInt(extended
                 ? maxExtendedTime - minExtendedTime
                 : maxRetractedTime - minRetractedTime)
                 + (extended ? minExtendedTime : minRetractedTime);
-        
+        GRTLogger.getLogger().logInfo("Going to sleep for " + sleepTime + " millis");
         setSleepTime(sleepTime);
         //sleeps according to GRTLoggedProcess
     }

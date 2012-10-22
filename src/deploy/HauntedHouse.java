@@ -5,7 +5,11 @@
 package deploy;
 
 import actuator.GRTSolenoid;
+import controller.HouseAutoController;
 import core.HouseMech;
+import edu.wpi.first.wpilibj.SimpleRobot;
+import java.util.Random;
+import logger.GRTLogger;
 import mechanisms.*;
 
 /**
@@ -18,7 +22,7 @@ import mechanisms.*;
  * directory.
  * @author Calvin, agd, dan
  */
-public class HauntedHouse {
+public class HauntedHouse extends SimpleRobot {
     
 	public static final int SLOT_ELMO = 0;
 	public static final int SLOT_CYCLOPS = 1;
@@ -27,20 +31,60 @@ public class HauntedHouse {
 	public static final int SLOT_SKELETON = 4;
 	
 	
+	
+	
+	public static final int MIN_EXTENDED_TIME = 100;
+	public static final int MAX_EXTENDED_TIME = 500;
+	public static final int MIN_RETRACTED_TIME = 100;
+	public static final int MAX_RETRACTED_TIME = 500;	
 	private HouseMech[] mechanisms;
+	private HouseAutoController[] autoControllers;
     /**
      * Constructor for the haunted house. 
      * Initialize all components here.
      */
     public HauntedHouse() {
 		
-		HouseMech elmo = new Elmo(new GRTSolenoid(1, "ElmoSolenoid"));
-		HouseMech cyclops = new Cyclops(new GRTSolenoid(2, "ElmoSolenoid"));
-		HouseMech pumpkin = new Pumpkin(new GRTSolenoid(3, "ElmoSolenoid"));
-		HouseMech shadows = new Shadows(new GRTSolenoid(4, "ElmoSolenoid"));
-		HouseMech skeleton = new SkeletonInChair(new GRTSolenoid(5, "ElmoSolenoid"));
+		GRTSolenoid elmoSol = new GRTSolenoid(1, "ElmoSolenoid");
+		GRTSolenoid cyclopsSol = new GRTSolenoid(2, "PumpkinSolenoid");
+		GRTSolenoid pumpkinSol = new GRTSolenoid(3, "ElmoSolenoid");
+		GRTSolenoid shadowsSol = new GRTSolenoid(4, "ElmoSolenoid");
+		GRTSolenoid skeletonSol = new GRTSolenoid(5, "ElmoSolenoid");
+		GRTSolenoid headSol = new GRTSolenoid(6, "ElmoSolenoid");
+		GRTSolenoid slenderSol = new GRTSolenoid(7, "ElmoSolenoid");
 		
-		mechanisms = new HouseMech[]{ elmo, cyclops, pumpkin, shadows, skeleton };
+		elmoSol.enable();
+		cyclopsSol.enable();
+		pumpkinSol.enable();
+		shadowsSol.enable();
+		skeletonSol.enable();
+		headSol.enable();
+		slenderSol.enable();
+		
+		HouseMech elmo = new Elmo(elmoSol);
+		HouseMech cyclops = new Cyclops(cyclopsSol);
+		HouseMech pumpkin = new Pumpkin(pumpkinSol);
+		HouseMech shadows = new Shadows(shadowsSol);
+		HouseMech skeleton = new SkeletonInChair(skeletonSol);
+		HouseMech spinHead = new SpinningHead(headSol);
+		HouseMech slender = new SpinningHead(slenderSol);
+		
+		mechanisms = new HouseMech[]{ elmo, cyclops, pumpkin, shadows, skeleton, spinHead, slender};
+		
+		autoControllers = new HouseAutoController[mechanisms.length];
+		
+		
+		for (int i=0; i < mechanisms.length; i++){
+			autoControllers[i] = new HouseAutoController(mechanisms[i].getID(), 
+								mechanisms[i], 
+								MIN_EXTENDED_TIME, 
+								MAX_EXTENDED_TIME,
+								MIN_RETRACTED_TIME, 
+								MAX_RETRACTED_TIME);
+			
+			autoControllers[i].beginAutonomous();
+			autoControllers[i].enable();
+		}
     }
     
 }

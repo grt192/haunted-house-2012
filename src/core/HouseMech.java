@@ -1,6 +1,7 @@
 package core;
 
 import actuator.GRTSolenoid;
+import logger.GRTLogger;
 
 /**
  * Generic haunted house mechanism.
@@ -38,7 +39,7 @@ public abstract class HouseMech extends GRTLoggedProcess {
      * @param sol single solenoid to control
      */
     public HouseMech(String name, GRTSolenoid sol) {
-        this(name, new GRTSolenoid[0]);
+        this(name, new GRTSolenoid[1]);
         solenoids[0] = sol;
     }
 
@@ -62,6 +63,7 @@ public abstract class HouseMech extends GRTLoggedProcess {
      * door will swing open, etc.
      */
     public final void activate() {
+		GRTLogger.getLogger().logInfo("Activating solenoid " + solenoids[0]);
         this.extended = true;
         extend();
     }
