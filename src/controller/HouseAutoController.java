@@ -71,4 +71,8 @@ public class HouseAutoController extends GRTLoggedProcess {
     public void endAutonomous() {
         halt();
     }
+    
+    public HouseMech getMech() {
+        return mech;
+    }
 }
