@@ -39,7 +39,7 @@ public abstract class HouseMech extends GRTLoggedProcess {
         listeners.addElement(l);
     }
 
-    public void removeButtonListener(HouseMechListener l) {
+    public void removeStateChangeListener(HouseMechListener l) {
         listeners.removeElement(l);
     }
 
@@ -89,11 +89,10 @@ public abstract class HouseMech extends GRTLoggedProcess {
      * Toggles the mechanism. If it is extended, retract; and vice versa.
      */
     public void toggle() {
-        if (extended) {
+        if (extended)
             deactivate();
-        } else {
+        else
             activate();
-        }
     }
 
     /**
