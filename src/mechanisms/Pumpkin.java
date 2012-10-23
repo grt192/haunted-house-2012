@@ -13,7 +13,7 @@ import core.HouseMech;
  */
 public class Pumpkin extends HouseMech{
     
-	public Pumpkin(GRTSolenoid solenoid){
+    public Pumpkin(GRTSolenoid solenoid){
         super("Pumpkin", solenoid);
     }
 
