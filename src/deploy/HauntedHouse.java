@@ -24,19 +24,16 @@ import mechanisms.*;
  * @author Calvin, agd, dan
  */
 public class HauntedHouse extends SimpleRobot {
-
-    public static final int SLOT_ELMO = 0;
-    public static final int SLOT_CYCLOPS = 1;
-    public static final int SLOT_PUMPKIN = 2;
-    public static final int SLOT_SHADOWS = 3;
-    public static final int SLOT_SKELETON = 4;
-    public static final int MIN_EXTENDED_TIME = 100;
-    public static final int MAX_EXTENDED_TIME = 500;
-    public static final int MIN_RETRACTED_TIME = 100;
-    public static final int MAX_RETRACTED_TIME = 500;
-    private HouseMech[] mechanisms;
-    private HouseAutoController[] autoControllers;
-
+    
+	public static final int MIN_EXTENDED_TIME =     3 * 1000;   //Minimum time in milliseconds a mech is extended.
+	public static final int MAX_EXTENDED_TIME =     8* 1000;    //Max time in milliseconds a mech can be extended.
+	public static final int MIN_RETRACTED_TIME =    2 *1000;    //Min time in milliseconds a mech will remain in the retracted state.
+	public static final int MAX_RETRACTED_TIME =    5* 1000;    //Max time in milliseconds a mech will remain in the retracted state.
+	
+        
+        private HouseMech[] mechanisms;                 //Array of mechanisms on the house.
+	private HouseAutoController[] autoControllers;  //Array of mechanism controllers.
+        
     /**
      * Constructor for the haunted house. Initialize all components here.
      */
