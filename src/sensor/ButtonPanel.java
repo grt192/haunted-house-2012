@@ -29,8 +29,8 @@ public class ButtonPanel extends Sensor {
     public static final int BUTTON7 = 13;
     public static final int BUTTON8 = 15;
     
-    public static final int TOGGLE_RED = 12;
-    public static final int TOGGLE_GREEN = 10;
+    public static final int TOGGLE_LEFT = 12;
+    public static final int TOGGLE_RIGHT = 10;
     public static final int ARCADE_ORANGE = 14;
     public static final int ARCADE_GREEN = 16;
     
@@ -52,26 +52,38 @@ public class ButtonPanel extends Sensor {
     public static final double PRESSED = TRUE;
     public static final double RELEASED = FALSE;
     private boolean[] LEDStates = new boolean[16];
+    
+    private static ButtonPanel instance;
+    
+    public static ButtonPanel getInstance() {
+        if (instance == null)
+            instance = new ButtonPanel();
+        return instance;
+    }
 
-    public ButtonPanel(String name) throws DriverStationEnhancedIO.EnhancedIOException {
-        super(name, 50, NUM_BUTTONS);
+    private ButtonPanel() {
+        super("HauntedHouseButtonPanel", 50, NUM_BUTTONS);
 
-        io.setDigitalConfig(BUTTON1, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
-        io.setDigitalConfig(BUTTON2, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
-        io.setDigitalConfig(BUTTON3, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
-        io.setDigitalConfig(BUTTON4, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
-        io.setDigitalConfig(BUTTON5, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
-        io.setDigitalConfig(BUTTON6, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
-        io.setDigitalConfig(BUTTON7, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
-        io.setDigitalConfig(BUTTON8, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
-        io.setDigitalConfig(TOGGLE_RED, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
-        io.setDigitalConfig(TOGGLE_GREEN, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
-        io.setDigitalConfig(ARCADE_ORANGE, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
-        io.setDigitalConfig(ARCADE_GREEN, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
+        try {
+            io.setDigitalConfig(BUTTON1, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
+            io.setDigitalConfig(BUTTON2, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
+            io.setDigitalConfig(BUTTON3, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
+            io.setDigitalConfig(BUTTON4, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
+            io.setDigitalConfig(BUTTON5, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
+            io.setDigitalConfig(BUTTON6, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
+            io.setDigitalConfig(BUTTON7, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
+            io.setDigitalConfig(BUTTON8, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
+            io.setDigitalConfig(TOGGLE_LEFT, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
+            io.setDigitalConfig(TOGGLE_RIGHT, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
+            io.setDigitalConfig(ARCADE_ORANGE, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
+            io.setDigitalConfig(ARCADE_GREEN, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
 
-        io.setDigitalConfig(REGISTER_CLK, DriverStationEnhancedIO.tDigitalConfig.kOutput);
-        io.setDigitalConfig(REGISTER_D, DriverStationEnhancedIO.tDigitalConfig.kOutput);
-        io.setDigitalConfig(REGISTER_LOAD, DriverStationEnhancedIO.tDigitalConfig.kOutput);
+            io.setDigitalConfig(REGISTER_CLK, DriverStationEnhancedIO.tDigitalConfig.kOutput);
+            io.setDigitalConfig(REGISTER_D, DriverStationEnhancedIO.tDigitalConfig.kOutput);
+            io.setDigitalConfig(REGISTER_LOAD, DriverStationEnhancedIO.tDigitalConfig.kOutput);
+        } catch (EnhancedIOException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void notifyListeners(int id, double oldDatum, double newDatum) {
@@ -107,16 +119,20 @@ public class ButtonPanel extends Sensor {
         buttonListeners.removeElement(b);
     }
 
-    public void updateLEDs() throws DriverStationEnhancedIO.EnhancedIOException {
-        io.setDigitalOutput(REGISTER_LOAD, false);
+    public synchronized void updateLEDs() {
+        try {
+            io.setDigitalOutput(REGISTER_LOAD, false);
 
-        for (int i = 0; i < LEDStates.length; i++) {
-            io.setDigitalOutput(REGISTER_CLK, false);
-            io.setDigitalOutput(REGISTER_D, LEDStates[i]);
-            io.setDigitalOutput(REGISTER_CLK, true);
+            for (int i = 0; i < LEDStates.length; i++) {
+                io.setDigitalOutput(REGISTER_CLK, false);
+                io.setDigitalOutput(REGISTER_D, LEDStates[i]);
+                io.setDigitalOutput(REGISTER_CLK, true);
+            }
+
+            io.setDigitalOutput(REGISTER_LOAD, true);
+        } catch (EnhancedIOException ex) {
+            ex.printStackTrace();
         }
-
-        io.setDigitalOutput(REGISTER_LOAD, true);
     }
     
     public void setLEDState(int buttonNum, LEDState state) {
