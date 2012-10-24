@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package sensor;
 
 import core.Sensor;
@@ -117,6 +113,10 @@ public class ButtonPanel extends Sensor {
 
     public void removeButtonListener(ButtonListener b) {
         buttonListeners.removeElement(b);
+    }
+        
+    public boolean isPressed(int buttonID) {
+        return getState(buttonID) == PRESSED;
     }
 
     public synchronized void updateLEDs() {
