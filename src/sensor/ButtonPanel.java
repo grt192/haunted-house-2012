@@ -30,7 +30,7 @@ public class ButtonPanel extends Sensor {
     public static final int ARCADE_ORANGE = 14;
     public static final int ARCADE_GREEN = 16;
     
-    private int[] buttonPins = {1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15};
+    private int[] buttonPins = {1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16};
     
     private static final int REGISTER_CLK = 6;
     private static final int REGISTER_D = 2;
