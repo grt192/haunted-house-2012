@@ -36,7 +36,7 @@ public class ButtonPanel extends Sensor {
     private static final int REGISTER_D = 2;
     private static final int REGISTER_LOAD = 4;
     
-    public static final int NUM_BUTTONS = 12;
+    public static final int NUM_BUTTONS = 17;
     
     private final Vector buttonListeners = new Vector();
     
