@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package controller;
 
 import core.EventController;
@@ -13,6 +9,27 @@ import sensor.ButtonPanel;
 
 /**
  * Controller for the haunted house using button panel.
+ * The board operates as follows:
+ * 
+ * Pressing a button for a mechanism toggles it, regardless of auto/manual control.
+ * Pressing the rocker switch right side extends all the mechanisms,
+ * left side retracts all the mechanisms.
+ * 
+ * Orange + button sets the mechanism to manual control.
+ * Orange + rocker right sets all mechanisms to manual control.
+ * 
+ * Green + button sets mechanism to auto control.
+ * Green + rocker right sets all mechanisms to auto control.
+ * 
+ * Green/orange + rocker left toggles all mechanisms.
+ * 
+ * If green and orange buttons are simultaneously pressed, green takes priority.
+ * 
+ * Green/orange LEDs indicate auto v. manual control.
+ * Green is auto control, orange is manual control.
+ * 
+ * Orange/red LEDs indicate mech state.
+ * Orange is retracted, red is extended.
  *
  * @author Calvin
  */
@@ -22,6 +39,13 @@ public class HauntedHouseController extends EventController
     ButtonPanel panel = ButtonPanel.getInstance();
     HouseAutoController[] mechs;
 
+    /**
+     * Constructs a new HauntedHouseController.
+     * 
+     * @param name name of controller
+     * @param mechs array of mechanism (autocontrollers) corresponding to the
+     * panel buttons. Since there are only 8 buttons, this only takes 8 mechs.
+     */
     public HauntedHouseController(String name, HouseAutoController[] mechs) {
         super(name);
         if (mechs.length > 8)
@@ -51,12 +75,31 @@ public class HauntedHouseController extends EventController
         int mechNum = -1;
         switch (e.getButtonID()) {
             case ButtonPanel.TOGGLE_RIGHT:
-                for (int i = 0; i < mechs.length; i++)
-                    mechs[i].beginAutonomous();
+                if (panel.isPressed(ButtonPanel.ARCADE_GREEN)) {
+                    log("All mechanisms autonomously controlled");
+                    for (int i = 0; i < mechs.length; i++)
+                        mechs[i].beginAutonomous();
+                } else if (panel.isPressed(ButtonPanel.ARCADE_ORANGE)) {
+                    log("All mechanisms manually controlled");
+                    for (int i = 0; i < mechs.length; i++)
+                        mechs[i].endAutonomous();
+                } else {
+                    log("All mechanisms extended");
+                    for (int i = 0; i < mechs.length; i++)
+                        mechs[i].getMech().activate();
+                }               
                 break;
             case ButtonPanel.TOGGLE_LEFT:
-                for (int i = 0; i < mechs.length; i++)
-                    mechs[i].endAutonomous();
+                 if (panel.isPressed(ButtonPanel.ARCADE_GREEN) ||
+                         panel.isPressed(ButtonPanel.ARCADE_ORANGE)) {
+                    log("All mechanisms toggled");
+                    for (int i = 0; i < mechs.length; i++)
+                        mechs[i].getMech().toggle();
+                } else {
+                    log("All mechanisms retracted");
+                    for (int i = 0; i < mechs.length; i++)
+                        mechs[i].getMech().deactivate();
+                }
                 break;
             case ButtonPanel.BUTTON1:
                 mechNum = 0;
@@ -84,12 +127,19 @@ public class HauntedHouseController extends EventController
                 break;
         }
 
-        if (mechNum >= 0)
-            if (panel.getState(ButtonPanel.ARCADE_GREEN)
-                    == ButtonPanel.PRESSED)
-                mechs[mechNum].beginAutonomous();
-            else {
-                mechs[mechNum].endAutonomous();
+        if (mechNum >= 0 && mechNum < mechs.length) //button pressed was mech button
+            if (panel.isPressed(ButtonPanel.ARCADE_GREEN)) {
+                if (!mechs[mechNum].isRunning()) {
+                    mechs[mechNum].beginAutonomous();
+                    log("Begin autonomous: " + mechs[mechNum].getID());
+                }
+            } else if (panel.isPressed(ButtonPanel.ARCADE_ORANGE)) {
+                if (mechs[mechNum].isRunning()) {
+                    mechs[mechNum].endAutonomous();
+                    log("Begin manual: " + mechs[mechNum].getID());
+                }
+            } else {
+                log("Toggle mech: " + mechs[mechNum].getID());
                 mechs[mechNum].getMech().toggle();
             }
     }
