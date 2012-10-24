@@ -3,7 +3,6 @@ package core;
 import actuator.GRTSolenoid;
 import event.listeners.HouseMechListener;
 import java.util.Vector;
-import logger.GRTLogger;
 
 /**
  * Generic haunted house mechanism.
@@ -71,7 +70,7 @@ public abstract class HouseMech extends GRTLoggedProcess {
      * door will swing open, etc.
      */
     public final void activate() {
-        GRTLogger.getLogger().logInfo("Activating solenoid " + solenoids[0]);
+        log("Activating solenoid " + solenoids[0].name);
         this.extended = true;
         extend();
     }
@@ -81,6 +80,7 @@ public abstract class HouseMech extends GRTLoggedProcess {
      * window, door will swing closed, etc.
      */
     public final void deactivate() {
+        log("Deactivating solenoid " + solenoids[0].name);
         this.extended = false;
         retract();
     }

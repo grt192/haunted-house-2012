@@ -1,17 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package controller;
 
 import core.GRTLoggedProcess;
 import core.HouseMech;
 import java.util.Random;
-import logger.GRTLogger;
 
 /**
- * A controller that controls autonomous switching
- * of a haunted house mechanism.
+ * A controller that controls autonomous switching of a haunted house mechanism.
  * Runs on a timer on random intervals with a set range.
  *
  * @author student
@@ -39,27 +33,27 @@ public class HouseAutoController extends GRTLoggedProcess {
     public HouseAutoController(String name, HouseMech mech,
             int minExtendedTime, int maxExtendedTime,
             int minRetractedTime, int maxRetractedTime) {
-        
+
         super(name, 0);
-        
+
         this.mech = mech;
         this.minExtendedTime = minExtendedTime;
         this.maxExtendedTime = maxExtendedTime;
         this.minRetractedTime = minRetractedTime;
         this.maxRetractedTime = maxRetractedTime;
     }
-    
+
     protected void poll() {
-        mech.toggle();        
+        mech.toggle();
         boolean extended = mech.getCurrentState();
-		
-		GRTLogger.getLogger().logInfo(extended ? "Retracting" : "Extending");
-        
-		int sleepTime = random.nextInt(extended
+
+        log(extended ? "Retracting" : "Extending");
+
+        int sleepTime = random.nextInt(extended
                 ? maxExtendedTime - minExtendedTime
                 : maxRetractedTime - minRetractedTime)
                 + (extended ? minExtendedTime : minRetractedTime);
-        GRTLogger.getLogger().logInfo("Going to sleep for " + sleepTime + " millis");
+        log("Going to sleep for " + sleepTime + " millis");
         setSleepTime(sleepTime);
         //sleeps according to GRTLoggedProcess
     }
@@ -71,7 +65,7 @@ public class HouseAutoController extends GRTLoggedProcess {
     public void endAutonomous() {
         halt();
     }
-    
+
     public HouseMech getMech() {
         return mech;
     }
