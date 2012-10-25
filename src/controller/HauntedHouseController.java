@@ -153,7 +153,6 @@ public class HauntedHouseController extends EventController
                 panel.setLEDState(i, ButtonPanel.ORANGE_RIGHT);
                 break;
             }
-        panel.updateLEDs();
     }
 
     public void mechRetract(HouseMechEvent e) {
@@ -162,6 +161,5 @@ public class HauntedHouseController extends EventController
                 panel.setLEDState(i, ButtonPanel.RED_RIGHT);
                 break;
             }
-        panel.updateLEDs();
     }
 }
