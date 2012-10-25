@@ -4,6 +4,7 @@ import core.Sensor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStationEnhancedIO;
 import edu.wpi.first.wpilibj.DriverStationEnhancedIO.EnhancedIOException;
+import edu.wpi.first.wpilibj.Timer;
 import event.events.ButtonEvent;
 import event.listeners.ButtonListener;
 import java.util.Enumeration;
@@ -32,13 +33,14 @@ public class ButtonPanel extends Sensor {
     
     private int[] buttonPins = {1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16};
     
-    private static final int REGISTER_CLK = 6;
-    private static final int REGISTER_D = 2;
+    private static final int REGISTER_CLK = 2;
+    private static final int REGISTER_D = 6;
     private static final int REGISTER_LOAD = 4;
     
     public static final int NUM_BUTTONS = 17;
     
     private final Vector buttonListeners = new Vector();
+    private final LEDUpdater updater = new LEDUpdater();
     
     DriverStationEnhancedIO io = DriverStation.getInstance().getEnhancedIO();
     
@@ -119,23 +121,16 @@ public class ButtonPanel extends Sensor {
         return getState(buttonID) == PRESSED;
     }
 
-    public synchronized void updateLEDs() {
-        try {
-            io.setDigitalOutput(REGISTER_LOAD, false);
-
-            for (int i = 0; i < LEDStates.length; i++) {
-                io.setDigitalOutput(REGISTER_CLK, false);
-                io.setDigitalOutput(REGISTER_D, LEDStates[i]);
-                io.setDigitalOutput(REGISTER_CLK, true);
-            }
-
-            io.setDigitalOutput(REGISTER_LOAD, true);
-        } catch (EnhancedIOException ex) {
-            ex.printStackTrace();
-        }
+    public void updateLEDs() {
+        StringBuffer s = new StringBuffer("UpdateLEDS");
+        for (int i = 0; i < 16; i++)
+            s.append(LEDStates[i] ? '1' : '0');
+        
+        updater.update();
     }
     
     public void setLEDState(int buttonNum, LEDState state) {
+        log("Set " + buttonNum + "led " + state.value);
         switch (state.value) {
             case LEDState.GL_VAL:
                 LEDStates[2 * buttonNum] = false;
@@ -150,6 +145,13 @@ public class ButtonPanel extends Sensor {
                 LEDStates[2 * buttonNum + 1] = true;
                 break;
         }
+        updateLEDs();
+    }
+    
+    public void setLEDStates(boolean[] states) {
+        for (int i = 0; i < states.length || i < LEDStates.length; i++)
+            LEDStates[i] = states[i];
+        updateLEDs();
     }
     
     public static final LEDState GREEN_LEFT = new LEDState(LEDState.GL_VAL);
@@ -167,6 +169,43 @@ public class ButtonPanel extends Sensor {
         
         private LEDState(int value) {
             this.value = value;
+        }
+    }
+    
+    private class LEDUpdater implements Runnable {      
+        
+        int regNum;
+        boolean updating = true;
+
+        public void run() {
+            updating = true;
+            try {
+                io.setDigitalOutput(REGISTER_LOAD, false);
+
+                for (regNum = LEDStates.length - 1; regNum >= 0; regNum--) {
+                    if (regNum >= LEDStates.length)
+                        regNum = LEDStates.length - 1;
+                    
+                    io.setDigitalOutput(REGISTER_D, LEDStates[regNum]);
+                    Timer.delay(.05);
+                    io.setDigitalOutput(REGISTER_CLK, true);
+                    Timer.delay(.05);
+                    io.setDigitalOutput(REGISTER_CLK, false);
+                    Timer.delay(.05);
+                }
+
+                io.setDigitalOutput(REGISTER_LOAD, true);
+            } catch (EnhancedIOException ex) {
+                ex.printStackTrace();
+            }
+            updating = false;
+        }
+        
+        public synchronized void update() {
+            if (!updating)  //start updating
+                new Thread(this).start();
+            else            //just start from beginning in feeding to SR
+                regNum = LEDStates.length;
         }
     }
 }
