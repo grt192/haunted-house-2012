@@ -47,23 +47,23 @@ public class HouseAutoController extends GRTLoggedProcess {
         mech.toggle();
         boolean extended = mech.getCurrentState();
 
-        log(extended ? "Retracting" : "Extending");
-
         int sleepTime = random.nextInt(extended
                 ? maxExtendedTime - minExtendedTime
                 : maxRetractedTime - minRetractedTime)
                 + (extended ? minExtendedTime : minRetractedTime);
-        log("Going to sleep for " + sleepTime + " millis");
+        
         setSleepTime(sleepTime);
         //sleeps according to GRTLoggedProcess
     }
 
     public void beginAutonomous() {
-        startPolling();
+        if (!isRunning())
+            startPolling();
+        enable();
     }
 
     public void endAutonomous() {
-        halt();
+        disable();
     }
 
     public HouseMech getMech() {
