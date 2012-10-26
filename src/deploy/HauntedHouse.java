@@ -1,10 +1,14 @@
 package deploy;
 
 import actuator.GRTSolenoid;
+import controller.HauntedHouseController;
 import controller.HouseAutoController;
 import core.HouseMech;
 import edu.wpi.first.wpilibj.SimpleRobot;
+import edu.wpi.first.wpilibj.Timer;
+import java.util.Random;
 import mechanisms.*;
+import sensor.ButtonPanel;
 
 /**
  * HauntedHouse is the entry point.
@@ -61,7 +65,6 @@ public class HauntedHouse extends SimpleRobot {
 
         autoControllers = new HouseAutoController[mechanisms.length];
 
-
         for (int i = 0; i < mechanisms.length; i++) {
             autoControllers[i] = new HouseAutoController(mechanisms[i].getID(),
                     mechanisms[i],
@@ -72,6 +75,24 @@ public class HauntedHouse extends SimpleRobot {
 
             autoControllers[i].beginAutonomous();
             autoControllers[i].enable();
+        }
+
+        HauntedHouseController controller =
+                new HauntedHouseController("HH Controller", autoControllers);
+        controller.enable();
+    }
+    
+    void LEDTest() {
+        boolean[] states = new boolean[]{true, false, true, false,
+            true, false, true, false,
+            true, false, true, false,
+            true, false, true, false};
+
+        for (int i = 0;; i++) {
+            for (int j = 0; j < 16; j++)
+                states[j] = !states[j];
+            ButtonPanel.getInstance().setLEDStates(states);
+            Timer.delay(2.5);
         }
     }
 }
