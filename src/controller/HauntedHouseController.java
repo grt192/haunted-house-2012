@@ -53,36 +53,43 @@ public class HauntedHouseController extends EventController
                     "HauntedHouseController can only handle 8 mechs, given "
                     + mechs.length);
 
+        log("HauntedHouseController initialized");
         this.mechs = mechs;
     }
 
     protected void startListening() {
+        panel.enable();
         panel.addButtonListener(this);
         for (int i = 0; i < mechs.length; i++)
             mechs[i].getMech().addStateChangeListener(this);
     }
 
     protected void stopListening() {
+        panel.disable();
         panel.removeButtonListener(this);
         for (int i = 0; i < mechs.length; i++)
             mechs[i].getMech().removeStateChangeListener(this);
     }
 
     public void buttonPressed(ButtonEvent e) {
-        if (e.getSource() != panel)
-            return;
+        
+        log("Button pressed " + e.getButtonID());
 
         int mechNum = -1;
         switch (e.getButtonID()) {
             case ButtonPanel.TOGGLE_RIGHT:
                 if (panel.isPressed(ButtonPanel.ARCADE_GREEN)) {
                     log("All mechanisms autonomously controlled");
-                    for (int i = 0; i < mechs.length; i++)
+                    for (int i = 0; i < mechs.length; i++) {
                         mechs[i].beginAutonomous();
+                        panel.setLEDState(i, ButtonPanel.GREEN_LEFT);
+                    }
                 } else if (panel.isPressed(ButtonPanel.ARCADE_ORANGE)) {
                     log("All mechanisms manually controlled");
-                    for (int i = 0; i < mechs.length; i++)
+                    for (int i = 0; i < mechs.length; i++) {
                         mechs[i].endAutonomous();
+                        panel.setLEDState(i, ButtonPanel.RED_LEFT);
+                    }
                 } else {
                     log("All mechanisms extended");
                     for (int i = 0; i < mechs.length; i++)
@@ -129,15 +136,13 @@ public class HauntedHouseController extends EventController
 
         if (mechNum >= 0 && mechNum < mechs.length) //button pressed was mech button
             if (panel.isPressed(ButtonPanel.ARCADE_GREEN)) {
-                if (!mechs[mechNum].isRunning()) {
-                    mechs[mechNum].beginAutonomous();
-                    log("Begin autonomous: " + mechs[mechNum].getID());
-                }
+                mechs[mechNum].beginAutonomous();
+                panel.setLEDState(mechNum, ButtonPanel.GREEN_LEFT);
+                log("Begin autonomous: " + mechs[mechNum].getID());
             } else if (panel.isPressed(ButtonPanel.ARCADE_ORANGE)) {
-                if (mechs[mechNum].isRunning()) {
-                    mechs[mechNum].endAutonomous();
-                    log("Begin manual: " + mechs[mechNum].getID());
-                }
+                mechs[mechNum].endAutonomous();
+                panel.setLEDState(mechNum, ButtonPanel.RED_LEFT);
+                log("Begin manual: " + mechs[mechNum].getID());
             } else {
                 log("Toggle mech: " + mechs[mechNum].getID());
                 mechs[mechNum].getMech().toggle();
@@ -149,7 +154,7 @@ public class HauntedHouseController extends EventController
 
     public void mechExtend(HouseMechEvent e) {
         for (int i = 0; i < mechs.length; i++)
-            if (mechs[i].getMech() == e.source) {
+            if (mechs[i].getMech() == e.source && mechs[i].isEnabled()) {
                 panel.setLEDState(i, ButtonPanel.ORANGE_RIGHT);
                 break;
             }
@@ -157,7 +162,7 @@ public class HauntedHouseController extends EventController
 
     public void mechRetract(HouseMechEvent e) {
         for (int i = 0; i < mechs.length; i++)
-            if (mechs[i].getMech() == e.source) {
+            if (mechs[i].getMech() == e.source&& mechs[i].isEnabled()) {
                 panel.setLEDState(i, ButtonPanel.RED_RIGHT);
                 break;
             }
