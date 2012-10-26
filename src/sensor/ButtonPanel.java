@@ -9,6 +9,7 @@ import event.events.ButtonEvent;
 import event.listeners.ButtonListener;
 import java.util.Enumeration;
 import java.util.Vector;
+import logger.GRTLogger;
 
 /**
  * Button panel to be used to control the haunted house.
@@ -26,8 +27,8 @@ public class ButtonPanel extends Sensor {
     public static final int BUTTON7 = 13;
     public static final int BUTTON8 = 15;
     
-    public static final int TOGGLE_LEFT = 12;
-    public static final int TOGGLE_RIGHT = 10;
+    public static final int TOGGLE_LEFT = 10;
+    public static final int TOGGLE_RIGHT = 12;
     public static final int ARCADE_ORANGE = 14;
     public static final int ARCADE_GREEN = 16;
     
@@ -54,8 +55,10 @@ public class ButtonPanel extends Sensor {
     private static ButtonPanel instance;
     
     public static ButtonPanel getInstance() {
-        if (instance == null)
+        if (instance == null) {
             instance = new ButtonPanel();
+            instance.startPolling();
+        }
         return instance;
     }
 
@@ -125,7 +128,7 @@ public class ButtonPanel extends Sensor {
         StringBuffer s = new StringBuffer("UpdateLEDS");
         for (int i = 0; i < 16; i++)
             s.append(LEDStates[i] ? '1' : '0');
-        
+        log(s.toString());
         updater.update();
     }
     
@@ -175,7 +178,8 @@ public class ButtonPanel extends Sensor {
     private class LEDUpdater implements Runnable {      
         
         int regNum;
-        boolean updating = true;
+        boolean updating = false;
+        boolean restart = false;
 
         public void run() {
             updating = true;
@@ -183,29 +187,36 @@ public class ButtonPanel extends Sensor {
                 io.setDigitalOutput(REGISTER_LOAD, false);
 
                 for (regNum = LEDStates.length - 1; regNum >= 0; regNum--) {
-                    if (regNum >= LEDStates.length)
+                    if (restart)
                         regNum = LEDStates.length - 1;
-                    
-                    io.setDigitalOutput(REGISTER_D, LEDStates[regNum]);
-                    Timer.delay(.05);
-                    io.setDigitalOutput(REGISTER_CLK, true);
-                    Timer.delay(.05);
+                    restart = false;
+                    log("updating LED " + regNum);
                     io.setDigitalOutput(REGISTER_CLK, false);
-                    Timer.delay(.05);
+                    Timer.delay(.030);
+                    io.setDigitalOutput(REGISTER_D, LEDStates[regNum]);
+                    Timer.delay(.012);
+                    io.setDigitalOutput(REGISTER_CLK, true);
+                    Timer.delay(.040);
                 }
 
+                Timer.delay(.03);
                 io.setDigitalOutput(REGISTER_LOAD, true);
             } catch (EnhancedIOException ex) {
                 ex.printStackTrace();
             }
             updating = false;
+            log("done updating");
         }
         
         public synchronized void update() {
-            if (!updating)  //start updating
+            if (!updating) {  //start updating
                 new Thread(this).start();
-            else            //just start from beginning in feeding to SR
-                regNum = LEDStates.length;
+                log("Starting new thread to update");
+                return;
+            }
+            //just start from beginning in feeding to SR
+            restart = true;
+            log("Restarting update procedure");
         }
     }
 }
