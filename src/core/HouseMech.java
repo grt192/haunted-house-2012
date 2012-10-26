@@ -1,7 +1,9 @@
 package core;
 
 import actuator.GRTSolenoid;
+import event.events.HouseMechEvent;
 import event.listeners.HouseMechListener;
+import java.util.Enumeration;
 import java.util.Vector;
 
 /**
@@ -21,7 +23,7 @@ public abstract class HouseMech extends GRTLoggedProcess {
      */
     protected GRTSolenoid[] solenoids;
     private boolean extended = false;	//We start in the inactive (not extended) state.
-    private Vector listeners;
+    private Vector listeners = new Vector();
 
     /**
      * Instantiates a house mechanism.
@@ -70,9 +72,12 @@ public abstract class HouseMech extends GRTLoggedProcess {
      * door will swing open, etc.
      */
     public final void activate() {
-        log("Activating solenoid " + solenoids[0].name);
+        log("extend " + name);
         this.extended = true;
         extend();
+        HouseMechEvent ev = new HouseMechEvent(this);
+        for (Enumeration e = listeners.elements(); e.hasMoreElements();)
+            ((HouseMechListener) e.nextElement()).mechExtend(ev);
     }
 
     /**
@@ -80,9 +85,12 @@ public abstract class HouseMech extends GRTLoggedProcess {
      * window, door will swing closed, etc.
      */
     public final void deactivate() {
-        log("Deactivating solenoid " + solenoids[0].name);
+        log("retract " + name);
         this.extended = false;
         retract();
+        HouseMechEvent ev = new HouseMechEvent(this);
+        for (Enumeration e = listeners.elements(); e.hasMoreElements();)
+            ((HouseMechListener) e.nextElement()).mechRetract(ev);
     }
 
     /**
