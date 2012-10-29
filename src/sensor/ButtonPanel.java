@@ -35,7 +35,8 @@ public class ButtonPanel extends Sensor {
     private int[] buttonPins = {1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16};
     
     private static final int REGISTER_CLK = 2;
-    private static final int REGISTER_D = 6;
+    private static final int REGISTER_D1 = 6;
+    private static final int REGISTER_D2 = 8;
     private static final int REGISTER_LOAD = 4;
     
     public static final int NUM_BUTTONS = 17;
@@ -80,7 +81,8 @@ public class ButtonPanel extends Sensor {
             io.setDigitalConfig(ARCADE_GREEN, DriverStationEnhancedIO.tDigitalConfig.kInputPullUp);
 
             io.setDigitalConfig(REGISTER_CLK, DriverStationEnhancedIO.tDigitalConfig.kOutput);
-            io.setDigitalConfig(REGISTER_D, DriverStationEnhancedIO.tDigitalConfig.kOutput);
+            io.setDigitalConfig(REGISTER_D1, DriverStationEnhancedIO.tDigitalConfig.kOutput);
+            io.setDigitalConfig(REGISTER_D2, DriverStationEnhancedIO.tDigitalConfig.kOutput);
             io.setDigitalConfig(REGISTER_LOAD, DriverStationEnhancedIO.tDigitalConfig.kOutput);
         } catch (EnhancedIOException e) {
             e.printStackTrace();
@@ -186,20 +188,21 @@ public class ButtonPanel extends Sensor {
             try {
                 io.setDigitalOutput(REGISTER_LOAD, false);
 
-                for (regNum = LEDStates.length - 1; regNum >= 0; regNum--) {
+                for (regNum = LEDStates.length / 2 - 1; regNum >= 0; regNum--) {
                     if (restart)
-                        regNum = LEDStates.length - 1;
+                        regNum = LEDStates.length / 2 - 1;
                     restart = false;
-                    log("updating LED " + regNum);
                     io.setDigitalOutput(REGISTER_CLK, false);
                     Timer.delay(.030);
-                    io.setDigitalOutput(REGISTER_D, LEDStates[regNum]);
-                    Timer.delay(.012);
+                    io.setDigitalOutput(REGISTER_D1, LEDStates[regNum]);
+                    io.setDigitalOutput(REGISTER_D2,
+                            LEDStates[regNum + LEDStates.length / 2]);
+                    Timer.delay(.014);
                     io.setDigitalOutput(REGISTER_CLK, true);
                     Timer.delay(.040);
                 }
 
-                Timer.delay(.03);
+                Timer.delay(.028);
                 io.setDigitalOutput(REGISTER_LOAD, true);
             } catch (EnhancedIOException ex) {
                 ex.printStackTrace();

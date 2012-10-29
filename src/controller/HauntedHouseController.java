@@ -154,7 +154,7 @@ public class HauntedHouseController extends EventController
 
     public void mechExtend(HouseMechEvent e) {
         for (int i = 0; i < mechs.length; i++)
-            if (mechs[i].getMech() == e.source && mechs[i].isEnabled()) {
+            if (mechs[i].getMech() == e.source) {
                 panel.setLEDState(i, ButtonPanel.ORANGE_RIGHT);
                 break;
             }
@@ -162,7 +162,7 @@ public class HauntedHouseController extends EventController
 
     public void mechRetract(HouseMechEvent e) {
         for (int i = 0; i < mechs.length; i++)
-            if (mechs[i].getMech() == e.source&& mechs[i].isEnabled()) {
+            if (mechs[i].getMech() == e.source) {
                 panel.setLEDState(i, ButtonPanel.RED_RIGHT);
                 break;
             }
